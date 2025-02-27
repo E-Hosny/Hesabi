@@ -31,5 +31,37 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'تمت إضافة المعاملة بنجاح!');
     }
 
+
+
+    public function update(Request $request, $id)
+    {
+        $transaction = Transaction::findOrFail($id);
+    
+        $request->validate([
+            'amount' => 'required|numeric',
+            'type' => 'required|in:credit,debit',
+            'details' => 'nullable|string',
+        ]);
+    
+        $transaction->update([
+            'amount' => $request->amount,
+            'type' => $request->type,
+            'details' => $request->details,
+        ]);
+    
+        return redirect()->route('customers.show', ['customer' => $transaction->customer_id])
+                         ->with('success', 'تم التحديث بنجاح');
+    }
+
+
+    public function destroy($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        $transaction->delete();
+
+        return redirect()->back()->with('success', 'تم حذف المعاملة بنجاح.');
+    }
+    
+
    
 }

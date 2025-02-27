@@ -33,9 +33,16 @@ const submit = () => {
     <Head title="Log in" />
 
     <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+                <template #logo>
+            <div class="flex flex-col items-center justify-center mt-10">
+                <AuthenticationCardLogo />
+                <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600"
+                    :style="{ animation: 'fadeIn 1.5s ease-out forwards, glow 2s infinite alternate ease-in-out' }">
+                    Helmy
+                </h1>
+
+            </div>
+            </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
@@ -88,3 +95,5 @@ const submit = () => {
         </form>
     </AuthenticationCard>
 </template>
+
+

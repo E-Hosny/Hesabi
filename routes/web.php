@@ -29,17 +29,23 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard',[CustomerController::class,'index'])->name('customers.index');
     Route::get('/', function () {
-        return Inertia::render('Dashboard');
+        return redirect()->route('customers.index');
     })->name('dashboard');
 
     // Route::get('/dashboard', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/test', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
-    Route::get('/customers/{customer}', [CustomerController::class, 'show']);
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+
     Route::post('/transactions/store', [TransactionController::class, 'store']);
+    Route::put('/transactions/{id}', [TransactionController::class, 'update']);
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+
 
 
 });
