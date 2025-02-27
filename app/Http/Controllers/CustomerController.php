@@ -36,6 +36,7 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
+        //comment
         $currencyType = $request->query('currency_type', 'local');
     
         $customers = Customer::with('transactions')
