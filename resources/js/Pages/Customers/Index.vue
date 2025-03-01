@@ -20,11 +20,16 @@ const filterByCurrency = (currency) => {
     Inertia.get('/test', { currency_type: currency }, { preserveState: true });
 };
 
-// 🔹 إضافة عميل جديد مع رقم الهاتف (اختياري)
+// التنقل إلى صفحة العميل عند الضغط على الكارد
+const goToCustomer = (id) => {
+    Inertia.visit(`/customers/${id}`);
+};
+
+// إضافة عميل جديد
 const addCustomer = () => {
     const newName = prompt('أدخل الاسم الجديد:');
     if (!newName) {
-        alert('الاسم مطلوب!'); // منع الإدخال الفارغ
+        alert('الاسم مطلوب!');
         return;
     }
 
@@ -32,20 +37,16 @@ const addCustomer = () => {
 
     Inertia.post('/customers/store', { 
         name: newName, 
-        phone: newPhone || null, // إذا كان رقم الهاتف فارغًا يتم إرساله كـ null
+        phone: newPhone || null, 
         currency_type: selectedCurrency.value 
     }, {
         preserveState: true,
-        onSuccess: () => {
-            console.log('تمت إضافة العميل بنجاح!');
-        },
-        onError: (errors) => {
-            console.error('حدث خطأ:', errors);
-        }
+        onSuccess: () => console.log('تمت إضافة العميل بنجاح!'),
+        onError: (errors) => console.error('حدث خطأ:', errors)
     });
 };
 
-// 🔹 تعديل اسم ورقم هاتف العميل
+// تعديل بيانات العميل
 const editCustomer = (id, oldName, oldPhone) => {
     const newName = prompt('أدخل الاسم الجديد:', oldName);
     if (!newName) {
@@ -56,26 +57,18 @@ const editCustomer = (id, oldName, oldPhone) => {
     const newPhone = prompt('أدخل رقم الهاتف الجديد:', oldPhone || '');
 
     Inertia.put(`/customers/${id}`, { name: newName, phone: newPhone || null }, {
-        onSuccess: () => {
-            console.log('تم تعديل العميل بنجاح!');
-        },
-        onError: (errors) => {
-            console.error('حدث خطأ أثناء التعديل:', errors);
-        }
+        onSuccess: () => console.log('تم تعديل العميل بنجاح!'),
+        onError: (errors) => console.error('حدث خطأ أثناء التعديل:', errors)
     });
 };
 
-// 🔹 حذف العميل
+// حذف العميل
 const deleteCustomer = (id) => {
     if (confirm('هل أنت متأكد أنك تريد حذف هذا العميل؟')) {
         Inertia.delete(`/customers/${id}`, {
             preserveState: true,
-            onSuccess: () => {
-                console.log('تم حذف العميل بنجاح!');
-            },
-            onError: (errors) => {
-                console.error('حدث خطأ أثناء الحذف:', errors);
-            }
+            onSuccess: () => console.log('تم حذف العميل بنجاح!'),
+            onError: (errors) => console.error('حدث خطأ أثناء الحذف:', errors)
         });
     }
 };
@@ -159,7 +152,12 @@ const deleteCustomer = (id) => {
 
       <!-- 🔹 عرض القائمة كـ "بطاقات" على الجوال -->
       <div class="sm:hidden">
-        <div v-for="customer in customers" :key="customer.id" class="p-4 border rounded-lg mb-4 shadow-md">
+        <div 
+          v-for="customer in customers" 
+          :key="customer.id" 
+          class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer"
+          @click="goToCustomer(customer.id)"
+        >
           <h3 class="text-lg font-semibold text-blue-600">{{ customer.name }}</h3>
           <p class="text-gray-600">📞 {{ customer.phone || "غير متوفر" }}</p>
           <p class="font-semibold mt-2" :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
@@ -167,13 +165,13 @@ const deleteCustomer = (id) => {
           </p>
           <div class="mt-2 flex justify-end gap-2">
             <button 
-              @click="editCustomer(customer.id, customer.name, customer.phone)" 
+              @click.stop="editCustomer(customer.id, customer.name, customer.phone)" 
               class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
             >
               تعديل
             </button>
             <button 
-              @click="deleteCustomer(customer.id)" 
+              @click.stop="deleteCustomer(customer.id)" 
               class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
             >
               حذف
@@ -186,9 +184,8 @@ const deleteCustomer = (id) => {
     <!-- 🔹 زر إضافة عميل جديد -->
     <div class="mt-4 text-center">
       <button @click="addCustomer" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-        ددددإضافة عميل 
+        إضافة عميل 
       </button>
     </div>
   </AppLayout>
 </template>
-
