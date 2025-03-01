@@ -14,25 +14,27 @@ onMounted(() => {
 });
 
 const selectedCurrency = ref(props.selectedCurrency || 'local');
-const searchQuery = ref(''); // 🔍 البحث
+const searchQuery = ref(""); // 🔹 متغير البحث
 
 const filterByCurrency = (currency) => {
     selectedCurrency.value = currency;
     Inertia.get('/test', { currency_type: currency }, { preserveState: true });
 };
 
+// تصفية العملاء بناءً على البحث
 const filteredCustomers = computed(() => {
-    if (!searchQuery.value) return props.customers;
-    return props.customers.filter(customer =>
+    return props.customers.filter(customer => 
         customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         (customer.phone && customer.phone.includes(searchQuery.value))
     );
 });
 
+// التنقل إلى صفحة العميل عند الضغط على اسمه
 const goToCustomer = (id) => {
     Inertia.visit(`/customers/${id}`);
 };
 
+// إضافة عميل جديد
 const addCustomer = () => {
     const newName = prompt('أدخل الاسم الجديد:');
     if (!newName) {
@@ -53,6 +55,7 @@ const addCustomer = () => {
     });
 };
 
+// تعديل بيانات العميل
 const editCustomer = (id, oldName, oldPhone) => {
     const newName = prompt('أدخل الاسم الجديد:', oldName);
     if (!newName) {
@@ -68,6 +71,7 @@ const editCustomer = (id, oldName, oldPhone) => {
     });
 };
 
+// حذف العميل
 const deleteCustomer = (id) => {
     if (confirm('هل أنت متأكد أنك تريد حذف هذا العميل؟')) {
         Inertia.delete(`/customers/${id}`, {
@@ -84,13 +88,13 @@ const deleteCustomer = (id) => {
     <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 class="text-xl font-semibold mb-4 text-center">قائمة العملاء</h2>
 
-      <!-- 🔍 مربع البحث -->
+      <!-- 🔹 مربع البحث -->
       <div class="mb-4">
         <input 
-          v-model="searchQuery" 
           type="text" 
-          placeholder="🔍 ابحث عن عميل بالاسم أو رقم الهاتف..." 
-          class="w-full p-2 border rounded-lg shadow-sm focus:ring focus:border-blue-300 transition"
+          v-model="searchQuery" 
+          placeholder="🔍 ابحث عن عميل بالاسم أو رقم الهاتف..."
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
         />
       </div>
 
@@ -127,18 +131,8 @@ const deleteCustomer = (id) => {
               <tr v-for="(customer, index) in filteredCustomers" :key="customer.id" class="border-b">
                 <td class="px-4 py-2 text-right border">
                   <div class="flex justify-center gap-2">
-                    <button 
-                      @click="editCustomer(customer.id, customer.name, customer.phone)" 
-                      class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
-                    >
-                      تعديل
-                    </button>
-                    <button 
-                      @click="deleteCustomer(customer.id)" 
-                      class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                    >
-                      حذف
-                    </button>
+                    <button @click="editCustomer(customer.id, customer.name, customer.phone)" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition">تعديل</button>
+                    <button @click="deleteCustomer(customer.id)" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">حذف</button>
                   </div>
                 </td>
                 <td class="px-4 py-2 text-right border">
@@ -146,13 +140,9 @@ const deleteCustomer = (id) => {
                     {{ customer.final_balance }} {{ customer.final_balance >= 0 ? 'له' : 'عليه' }}
                   </span>
                 </td>
-                <td class="px-4 py-2 text-right border sm:table-cell">
-                  {{ customer.phone }}
-                </td>
+                <td class="px-4 py-2 text-right border sm:table-cell">{{ customer.phone }}</td>
                 <td class="px-4 py-2 text-right border">
-                  <a :href="`/customers/${customer.id}`" class="text-blue-500 hover:underline">
-                    {{ customer.name }}
-                  </a>
+                  <a @click="goToCustomer(customer.id)" class="text-blue-500 hover:underline cursor-pointer">{{ customer.name }}</a>
                 </td>
                 <td class="px-4 py-2 text-right border sm:table-cell">{{ index + 1 }}</td>
               </tr>
@@ -163,26 +153,27 @@ const deleteCustomer = (id) => {
 
       <!-- 🔹 عرض القائمة كـ "بطاقات" على الجوال -->
       <div class="sm:hidden">
-        <div 
-          v-for="customer in filteredCustomers" 
-          :key="customer.id" 
-          class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer"
-          @click="goToCustomer(customer.id)"
-        >
-          <h3 class="text-lg font-semibold text-blue-600">{{ customer.name }}</h3>
+        <div v-for="customer in filteredCustomers" :key="customer.id" class="p-4 border rounded-lg mb-4 shadow-md">
+          <h3 @click="goToCustomer(customer.id)" class="text-lg font-semibold text-blue-600 cursor-pointer">
+            {{ customer.name }}
+          </h3>
           <p class="text-gray-600">📞 {{ customer.phone || "غير متوفر" }}</p>
           <p class="font-semibold mt-2" :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
             {{ customer.final_balance }} {{ customer.final_balance >= 0 ? 'له' : 'عليه' }}
           </p>
+          <div class="mt-2 flex justify-end gap-2">
+            <button @click="editCustomer(customer.id, customer.name, customer.phone)" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition">تعديل</button>
+            <button @click="deleteCustomer(customer.id)" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">حذف</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 🔹 زر إضافة عميل جديد -->
-    <div class="mt-4 text-center">
-      <button @click="addCustomer" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-        إضافة عميل 
-      </button>
+      <!-- 🔹 زر إضافة عميل جديد (مع مسافة كافية) -->
+      <div class="mt-8 text-center">
+        <button @click="addCustomer" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 shadow-md">
+          + إضافة عميل 
+        </button>
+      </div>
     </div>
   </AppLayout>
 </template>
