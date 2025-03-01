@@ -153,8 +153,8 @@ const deleteCustomer = (id) => {
 
       <!-- 🔹 عرض القائمة كـ "بطاقات" على الجوال -->
       <div class="sm:hidden">
-        <div v-for="customer in filteredCustomers" :key="customer.id" class="p-4 border rounded-lg mb-4 shadow-md">
-          <h3 @click="goToCustomer(customer.id)" class="text-lg font-semibold text-blue-600 cursor-pointer">
+        <div @click="goToCustomer(customer.id)" v-for="customer in filteredCustomers" :key="customer.id" class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer">
+          <h3  class="text-lg font-semibold text-blue-600">
             {{ customer.name }}
           </h3>
           <p class="text-gray-600">📞 {{ customer.phone || "غير متوفر" }}</p>
