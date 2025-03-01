@@ -120,7 +120,7 @@ onMounted(() => {
     <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 class="text-2xl font-semibold mb-4 text-center">تفاصيل العميل: {{ customer.name }}</h2>
 
-        <div class="mb-6 p-4 bg-gray-100 rounded-lg flex items-center justify-between">
+      <div class="mb-6 p-4 bg-gray-100 rounded-lg flex items-center justify-between">
         <h3 class="text-lg font-semibold">سجل المعاملات</h3>
         <input
           v-model="searchQuery"
@@ -129,7 +129,6 @@ onMounted(() => {
           class="border rounded-lg p-2 w-1/3 focus:ring focus:border-blue-300 transition"
         />
       </div>
-
 
       <div class="mb-6 p-4 bg-gray-100 rounded-lg">
         <h3 class="text-lg font-semibold mb-3">إضافة معاملة جديدة</h3>
@@ -146,55 +145,44 @@ onMounted(() => {
         </button>
         <div v-if="errors.amount" class="text-red-500 mt-2">{{ errors.amount }}</div>
       </div>
-      
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full border border-gray-300 rounded-lg">
-         <thead>
-    <tr class="bg-gray-100">
-        <th class="text-right px-4 py-2 border">الإجراءات</th>
-        <th class="text-right px-4 py-2 border">الرصيد المتبقي</th> <!-- إضافة عمود جديد -->
-        <th class="text-right px-4 py-2 border">الملاحظات</th>
-        <th class="text-right px-4 py-2 border">الرصيد (له/عليه)</th>
-        <th class="text-right px-4 py-2 border">المبلغ</th>
-        <th class="text-right px-4 py-2 border">التاريخ</th>
-    </tr>
-        </thead>
-        <tbody>
-            <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
-                <td class="px-4 py-2 text-right border">
-                    <div class="flex justify-center gap-2">
-                        <button 
-                            @click="startEditing(transaction)" 
-                            class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
-                        >
-                            تعديل
-                        </button>
-                        <button 
-                            @click="deleteTransaction(transaction.id)" 
-                            class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                        >
-                            حذف
-                        </button>
-                    </div>
-                </td>
-               
-                <td class="px-4 py-2 text-right border font-bold" :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
-                    {{ transaction.remaining_balance }}
-                </td> <!-- إضافة عمود الرصيد المتبقي -->
-                <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
-                 <td class="px-4 py-2 text-right border">
-                    <span :class="transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'">
-                        {{ transaction.type === 'credit' ? 'له' : 'عليه' }}
-                    </span>
-                </td>
-                <td class="px-4 py-2 text-right border">{{ transaction.amount }}</td>
-                <td class="px-4 py-2 text-right border">{{ transaction.created_at }}</td>
-            </tr>
-        </tbody>
-
-        </table>
-      </div>
+      <!-- حاوية قابلة للتمرير أفقيًا -->
+<div class="overflow-x-auto">
+  <table class="table-auto w-full border border-gray-300 rounded-lg text-sm">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="text-right px-2 py-1 border">الإجراءات</th>
+        <th class="text-right px-2 py-1 border">الرصيد المتبقي</th>
+        <th class="text-right px-2 py-1 border">الملاحظات</th>
+        <th class="text-right px-2 py-1 border">المبلغ</th>
+        <th class="text-right px-2 py-1 border">التاريخ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
+        <td class="px-2 py-1 text-right border">
+          <div class="flex justify-center gap-1">
+            <button @click="startEditing(transaction)" class="bg-blue-500 text-white px-2 py-1 rounded-md text-xs">
+              ✏️
+            </button>
+            <button @click="deleteTransaction(transaction.id)" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs">
+              🗑️
+            </button>
+          </div>
+        </td>
+        <td class="px-2 py-1 text-right border font-bold" 
+            :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
+          {{ transaction.remaining_balance }}
+        </td>
+        <td class="px-2 py-1 text-right border break-words whitespace-normal max-w-[100px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-xs">
+          {{ transaction.details }}
+        </td>
+        <td class="px-2 py-1 text-right border">{{ transaction.type === 'credit' ? '+' : '-' }}{{ transaction.amount }}</td>
+        <td class="px-2 py-1 text-right border">{{ transaction.created_at }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
       <div v-if="editingTransaction" class="p-4 bg-gray-100 rounded-lg mt-4">
         <h3 class="text-lg font-semibold mb-3">تعديل المعاملة</h3>
@@ -219,7 +207,7 @@ onMounted(() => {
       <div class="mt-4 p-4 text-center border-t">
         <h3 class="text-lg font-semibold">الرصيد النهائي:</h3>
         <p :class="balanceColor" class="text-2xl font-bold">
-                {{ finalBalance }} {{ finalBalance >= 0 ? 'له' : 'عليه' }}
+          {{ finalBalance }} {{ finalBalance >= 0 ? 'له' : 'عليه' }}
         </p>
       </div>
     </div>
