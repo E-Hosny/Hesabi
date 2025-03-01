@@ -152,21 +152,34 @@ const deleteCustomer = (id) => {
       </div>
 
       <!-- 🔹 عرض القائمة كـ "بطاقات" على الجوال -->
-      <div class="sm:hidden">
-        <div @click="goToCustomer(customer.id)" v-for="customer in filteredCustomers" :key="customer.id" class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer">
-          <h3  class="text-lg font-semibold text-blue-600">
+  <div class="sm:hidden">
+    <div 
+        @click="goToCustomer(customer.id)" 
+        v-for="customer in filteredCustomers" 
+        :key="customer.id" 
+        class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer"
+    >
+        <h3 class="text-lg font-semibold text-blue-600">
             {{ customer.name }}
-          </h3>
-          <p class="text-gray-600">📞 {{ customer.phone || "غير متوفر" }}</p>
-          <p class="font-semibold mt-2" :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
+        </h3>
+        <p class="text-gray-600">📞 {{ customer.phone || "غير متوفر" }}</p>
+        <p class="font-semibold mt-2" :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
             {{ customer.final_balance }} {{ customer.final_balance >= 0 ? 'له' : 'عليه' }}
-          </p>
-          <div class="mt-2 flex justify-end gap-2">
-            <button @click="editCustomer(customer.id, customer.name, customer.phone)" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition">تعديل</button>
-            <button @click="deleteCustomer(customer.id)" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">حذف</button>
-          </div>
+        </p>
+        <div class="mt-2 flex justify-end gap-2">
+            <!-- استخدم @click.stop لمنع تنفيذ الحدث الرئيسي -->
+            <button @click.stop="editCustomer(customer.id, customer.name, customer.phone)" 
+                class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition">
+                تعديل
+            </button>
+            <button @click.stop="deleteCustomer(customer.id)" 
+                class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">
+                حذف
+            </button>
         </div>
-      </div>
+    </div>
+</div>
+
 
       <!-- 🔹 زر إضافة عميل جديد (مع مسافة كافية) -->
       <div class="mt-8 text-center">
