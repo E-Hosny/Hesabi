@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -14,18 +14,25 @@ onMounted(() => {
 });
 
 const selectedCurrency = ref(props.selectedCurrency || 'local');
+const searchQuery = ref(''); // 🔍 البحث
 
 const filterByCurrency = (currency) => {
     selectedCurrency.value = currency;
     Inertia.get('/test', { currency_type: currency }, { preserveState: true });
 };
 
-// التنقل إلى صفحة العميل عند الضغط على الكارد
+const filteredCustomers = computed(() => {
+    if (!searchQuery.value) return props.customers;
+    return props.customers.filter(customer =>
+        customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        (customer.phone && customer.phone.includes(searchQuery.value))
+    );
+});
+
 const goToCustomer = (id) => {
     Inertia.visit(`/customers/${id}`);
 };
 
-// إضافة عميل جديد
 const addCustomer = () => {
     const newName = prompt('أدخل الاسم الجديد:');
     if (!newName) {
@@ -46,7 +53,6 @@ const addCustomer = () => {
     });
 };
 
-// تعديل بيانات العميل
 const editCustomer = (id, oldName, oldPhone) => {
     const newName = prompt('أدخل الاسم الجديد:', oldName);
     if (!newName) {
@@ -62,7 +68,6 @@ const editCustomer = (id, oldName, oldPhone) => {
     });
 };
 
-// حذف العميل
 const deleteCustomer = (id) => {
     if (confirm('هل أنت متأكد أنك تريد حذف هذا العميل؟')) {
         Inertia.delete(`/customers/${id}`, {
@@ -78,6 +83,16 @@ const deleteCustomer = (id) => {
   <AppLayout title="Dashboard">
     <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 class="text-xl font-semibold mb-4 text-center">قائمة العملاء</h2>
+
+      <!-- 🔍 مربع البحث -->
+      <div class="mb-4">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="🔍 ابحث عن عميل بالاسم أو رقم الهاتف..." 
+          class="w-full p-2 border rounded-lg shadow-sm focus:ring focus:border-blue-300 transition"
+        />
+      </div>
 
       <!-- 🔹 خيارات الفلترة بالعملة -->
       <div class="flex justify-center gap-4 my-4">
@@ -109,7 +124,7 @@ const deleteCustomer = (id) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(customer, index) in customers" :key="customer.id" class="border-b">
+              <tr v-for="(customer, index) in filteredCustomers" :key="customer.id" class="border-b">
                 <td class="px-4 py-2 text-right border">
                   <div class="flex justify-center gap-2">
                     <button 
@@ -126,23 +141,19 @@ const deleteCustomer = (id) => {
                     </button>
                   </div>
                 </td>
-
                 <td class="px-4 py-2 text-right border">
                   <span :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
                     {{ customer.final_balance }} {{ customer.final_balance >= 0 ? 'له' : 'عليه' }}
                   </span>
                 </td>
-
                 <td class="px-4 py-2 text-right border sm:table-cell">
                   {{ customer.phone }}
                 </td>
-
                 <td class="px-4 py-2 text-right border">
                   <a :href="`/customers/${customer.id}`" class="text-blue-500 hover:underline">
                     {{ customer.name }}
                   </a>
                 </td>
-
                 <td class="px-4 py-2 text-right border sm:table-cell">{{ index + 1 }}</td>
               </tr>
             </tbody>
@@ -153,7 +164,7 @@ const deleteCustomer = (id) => {
       <!-- 🔹 عرض القائمة كـ "بطاقات" على الجوال -->
       <div class="sm:hidden">
         <div 
-          v-for="customer in customers" 
+          v-for="customer in filteredCustomers" 
           :key="customer.id" 
           class="p-4 border rounded-lg mb-4 shadow-md cursor-pointer"
           @click="goToCustomer(customer.id)"
@@ -163,20 +174,6 @@ const deleteCustomer = (id) => {
           <p class="font-semibold mt-2" :class="customer.final_balance >= 0 ? 'text-green-500' : 'text-red-500'">
             {{ customer.final_balance }} {{ customer.final_balance >= 0 ? 'له' : 'عليه' }}
           </p>
-          <div class="mt-2 flex justify-end gap-2">
-            <button 
-              @click.stop="editCustomer(customer.id, customer.name, customer.phone)" 
-              class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
-            >
-              تعديل
-            </button>
-            <button 
-              @click.stop="deleteCustomer(customer.id)" 
-              class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-            >
-              حذف
-            </button>
-          </div>
         </div>
       </div>
     </div>
