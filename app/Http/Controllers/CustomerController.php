@@ -36,6 +36,8 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
+        // dd("here");
+        
         //comment
         $currencyType = $request->query('currency_type', 'local');
     
