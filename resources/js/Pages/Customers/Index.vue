@@ -186,7 +186,7 @@ const deleteCustomer = (id) => {
     <!-- 🔹 زر إضافة عميل جديد -->
     <div class="mt-4 text-center">
       <button @click="addCustomer" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-        إضافة عميل جديد
+        ددددإضافة عميل جديد
       </button>
     </div>
   </AppLayout>
