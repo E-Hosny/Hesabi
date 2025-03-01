@@ -125,26 +125,35 @@ onMounted(() => {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="🔍 ابحث عن معاملة..."
+          placeholder="🔍 ابحث .."
           class="border rounded-lg p-2 w-1/3 focus:ring focus:border-blue-300 transition"
         />
       </div>
 
-      <div class="mb-6 p-4 bg-gray-100 rounded-lg">
-        <h3 class="text-lg font-semibold mb-3">إضافة معاملة جديدة</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input v-model="amount" type="number" placeholder="المبلغ" class="border rounded-lg p-2 w-full" />
-          <select v-model="type" class="border rounded-lg p-2 w-full">
-            <option value="credit">له</option>
-            <option value="debit">عليه</option>
-          </select>
-          <input v-model="details" type="text" placeholder="الملاحظات" class="border rounded-lg p-2 w-full" />
-        </div>
-        <button @click="addTransaction" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-          إضافة المعاملة
-        </button>
-        <div v-if="errors.amount" class="text-red-500 mt-2">{{ errors.amount }}</div>
-      </div>
+     <div class="mb-6 p-4 bg-gray-100 rounded-lg">
+  <h3 class="text-lg font-semibold mb-3">إضافة معاملة جديدة</h3>
+  
+  <div class="flex flex-wrap gap-2">
+    <input v-model="amount" type="number" placeholder="المبلغ" 
+           class="border rounded-lg p-2 flex-1 min-w-[30%]" />
+    
+    <select v-model="type" class="border rounded-lg p-2 flex-1 min-w-[30%]">
+      <option value="credit">له</option>
+      <option value="debit">عليه</option>
+    </select>
+    
+    <input v-model="details" type="text" placeholder="الملاحظات" 
+           class="border rounded-lg p-2 flex-1 min-w-[30%]" />
+  </div>
+
+  <button @click="addTransaction" 
+          class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+    إضافة المعاملة
+  </button>
+
+  <div v-if="errors.amount" class="text-red-500 mt-2">{{ errors.amount }}</div>
+</div>
+
 
       <!-- حاوية قابلة للتمرير أفقيًا -->
 <div class="overflow-x-auto">
