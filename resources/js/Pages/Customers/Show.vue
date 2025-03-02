@@ -161,10 +161,10 @@ onMounted(() => {
       <thead>
         <tr class="bg-gray-100">
             <th class="text-right px-4 py-2 border">الإجراءات</th>
-             <th class="text-right px-4 py-2 border">الملاحظات</th>
             <th class="text-right px-4 py-2 border">الرصيد المتبقي</th>
             <th class="text-right px-4 py-2 border">عليه</th>
             <th class="text-right px-4 py-2 border">له</th>
+             <th class="text-right px-4 py-2 border">الملاحظات</th>
             <th class="text-right px-4 py-2 border">التاريخ</th>
         </tr>
     </thead>
@@ -180,7 +180,6 @@ onMounted(() => {
                           </button>
                       </div>
                   </td>
-                    <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
 
                   <td class="px-4 py-2 text-right border font-bold" 
                       :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
@@ -192,7 +191,8 @@ onMounted(() => {
                   <td class="px-4 py-2 text-right border text-green-500 font-bold">
                       {{ transaction.type === 'credit' ? transaction.amount : '' }}
                   </td>
-               
+                   <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
+
                   <td class="px-4 py-2 text-right border">{{ transaction.created_at }}</td>
               </tr>
           </tbody>
