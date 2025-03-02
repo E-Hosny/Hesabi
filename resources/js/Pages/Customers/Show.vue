@@ -185,9 +185,10 @@ onMounted(() => {
         <td class="px-2 py-1 text-right border text-green-500 font-bold">
           {{ transaction.type === 'credit' ? transaction.amount : '' }}
         </td>
-        <td class="px-2 py-1 text-right border w-48 break-words whitespace-normal">
+            <td class="px-2 py-1 text-right border max-w-[150px] break-words whitespace-normal overflow-wrap">
           {{ transaction.details }}
         </td>
+
         <td class="px-2 py-1 text-right border">
           {{ transaction.created_at }}
         </td>
