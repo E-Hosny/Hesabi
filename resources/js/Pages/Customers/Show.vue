@@ -156,50 +156,46 @@ onMounted(() => {
       </div>
       
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full border border-gray-300 rounded-lg">
-      <thead>
-        <tr class="bg-gray-100">
-            <th class="text-right px-4 py-2 border">الإجراءات</th>
-            <th class="text-right px-4 py-2 border">الرصيد المتبقي</th>
-            <th class="text-right px-4 py-2 border">عليه</th>
-            <th class="text-right px-4 py-2 border">له</th>
-             <th class="text-right px-4 py-2 border">الملاحظات</th>
-            <th class="text-right px-4 py-2 border">التاريخ</th>
-        </tr>
+     <div class="overflow-x-auto">
+  <table class="min-w-full border border-gray-300 rounded-lg text-sm">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="text-right px-2 py-1 border">الإجراءات</th>
+        <th class="text-right px-2 py-1 border">الرصيد المتبقي</th>
+        <th class="text-right px-2 py-1 border">عليه</th>
+        <th class="text-right px-2 py-1 border">له</th>
+        <th class="text-right px-2 py-1 border w-48">الملاحظات</th> 
+        <th class="text-right px-2 py-1 border">التاريخ</th>
+      </tr>
     </thead>
-          <tbody>
-              <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
-                  <td class="px-4 py-2 text-right border">
-                      <div class="flex justify-center gap-1">
-                          <button @click="startEditing(transaction)" class="bg-blue-500 text-white px-2 py-1 rounded-md text-xs">
-                              ✏️
-                          </button>
-                          <button @click="deleteTransaction(transaction.id)" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs">
-                              🗑️
-                          </button>
-                      </div>
-                  </td>
+    <tbody>
+      <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
+        <td class="px-2 py-1 text-right border">
+          <div class="flex justify-center gap-1">
+            <button @click="startEditing(transaction)" class="bg-blue-500 text-white px-2 py-1 rounded-md text-xs">✏️</button>
+            <button @click="deleteTransaction(transaction.id)" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs">🗑️</button>
+          </div>
+        </td>
+        <td class="px-2 py-1 text-right border font-bold" :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
+          {{ transaction.remaining_balance }}
+        </td>
+        <td class="px-2 py-1 text-right border text-red-500 font-bold">
+          {{ transaction.type === 'debit' ? transaction.amount : '' }}
+        </td>
+        <td class="px-2 py-1 text-right border text-green-500 font-bold">
+          {{ transaction.type === 'credit' ? transaction.amount : '' }}
+        </td>
+        <td class="px-2 py-1 text-right border w-48 break-words whitespace-normal">
+          {{ transaction.details }}
+        </td>
+        <td class="px-2 py-1 text-right border">
+          {{ transaction.created_at }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-                  <td class="px-4 py-2 text-right border font-bold" 
-                      :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
-                      {{ transaction.remaining_balance }}
-                  </td>
-                     <td class="px-4 py-2 text-right border text-red-500 font-bold">
-                      {{ transaction.type === 'debit' ? transaction.amount : '' }}
-                  </td>
-                  <td class="px-4 py-2 text-right border text-green-500 font-bold">
-                      {{ transaction.type === 'credit' ? transaction.amount : '' }}
-                  </td>
-                   <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
-
-                  <td class="px-4 py-2 text-right border">{{ transaction.created_at }}</td>
-              </tr>
-          </tbody>
-
-
-        </table>
-      </div>
 
       <div v-if="editingTransaction" class="p-4 bg-gray-100 rounded-lg mt-4">
         <h3 class="text-lg font-semibold mb-3">تعديل المعاملة</h3>
