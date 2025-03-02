@@ -158,42 +158,45 @@ onMounted(() => {
 
       <div class="overflow-x-auto">
         <table class="min-w-full border border-gray-300 rounded-lg">
-         <thead>
-    <tr class="bg-gray-100">
-        <th class="text-right px-4 py-2 border">الإجراءات</th>
-        <th class="text-right px-4 py-2 border">الرصيد المتبقي</th> <!-- إضافة عمود جديد -->
-        <th class="text-right px-4 py-2 border">الملاحظات</th>
-        <th class="text-right px-4 py-2 border">الرصيد (له/عليه)</th>
-        <th class="text-right px-4 py-2 border">المبلغ</th>
-        <th class="text-right px-4 py-2 border">التاريخ</th>
-    </tr>
-        </thead>
-        <tbody>
-            <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
-                <td class="px-4 py-2 text-right border">
-                  <div class="flex justify-center gap-1">
-                    <button @click="startEditing(transaction)" class="bg-blue-500 text-white px-2 py-1 rounded-md text-xs">
-                      ✏️
-                    </button>
-                    <button @click="deleteTransaction(transaction.id)" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs">
-                      🗑️
-                    </button>
-                </div>
-                </td>
+      <thead>
+        <tr class="bg-gray-100">
+            <th class="text-right px-4 py-2 border">الإجراءات</th>
+             <th class="text-right px-4 py-2 border">الملاحظات</th>
+            <th class="text-right px-4 py-2 border">الرصيد المتبقي</th>
+            <th class="text-right px-4 py-2 border">عليه</th>
+            <th class="text-right px-4 py-2 border">له</th>
+            <th class="text-right px-4 py-2 border">التاريخ</th>
+        </tr>
+    </thead>
+          <tbody>
+              <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b">
+                  <td class="px-4 py-2 text-right border">
+                      <div class="flex justify-center gap-1">
+                          <button @click="startEditing(transaction)" class="bg-blue-500 text-white px-2 py-1 rounded-md text-xs">
+                              ✏️
+                          </button>
+                          <button @click="deleteTransaction(transaction.id)" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs">
+                              🗑️
+                          </button>
+                      </div>
+                  </td>
+                    <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
+
+                  <td class="px-4 py-2 text-right border font-bold" 
+                      :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
+                      {{ transaction.remaining_balance }}
+                  </td>
+                     <td class="px-4 py-2 text-right border text-red-500 font-bold">
+                      {{ transaction.type === 'debit' ? transaction.amount : '' }}
+                  </td>
+                  <td class="px-4 py-2 text-right border text-green-500 font-bold">
+                      {{ transaction.type === 'credit' ? transaction.amount : '' }}
+                  </td>
                
-                <td class="px-4 py-2 text-right border font-bold" :class="transaction.remaining_balance >= 0 ? 'text-green-500' : 'text-red-500'">
-                    {{ transaction.remaining_balance }}
-                </td> <!-- إضافة عمود الرصيد المتبقي -->
-                <td class="px-4 py-2 text-right border">{{ transaction.details }}</td>
-                 <td class="px-4 py-2 text-right border">
-                    <span :class="transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'">
-                        {{ transaction.type === 'credit' ? 'له' : 'عليه' }}
-                    </span>
-                </td>
-                <td class="px-4 py-2 text-right border">{{ transaction.amount }}</td>
-                <td class="px-4 py-2 text-right border">{{ transaction.created_at }}</td>
-            </tr>
-        </tbody>
+                  <td class="px-4 py-2 text-right border">{{ transaction.created_at }}</td>
+              </tr>
+          </tbody>
+
 
         </table>
       </div>
